@@ -2,6 +2,7 @@ import express from "express";
 
 const app = express();
 const PORT = 3000;
+const GUMROAD_URL = "https://fortinix.gumroad.com/l/odfzgi";
 
 app.use(express.json({ limit: "2mb" }));
 
@@ -14,90 +15,238 @@ app.get("/", (req, res) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hirevize</title>
   <style>
+    :root {
+      --bg: #0f172a;
+      --bg-soft: #111827;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --success: #16a34a;
+      --success-dark: #15803d;
+      --line: #e2e8f0;
+      --surface: #f8fafc;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8fafc;
-      color: #0f172a;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      line-height: 1.5;
     }
+
     .hero {
-      background: linear-gradient(135deg, #0f172a, #111827);
+      background: linear-gradient(135deg, var(--bg), var(--bg-soft));
       color: white;
-      padding: 50px 20px;
+      padding: 56px 20px 42px;
       text-align: center;
     }
-    .wrap {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px;
+
+    .hero h1 {
+      margin: 0 0 12px;
+      font-size: 42px;
     }
+
+    .hero p {
+      margin: 0 auto;
+      max-width: 760px;
+      font-size: 18px;
+      color: rgba(255,255,255,0.88);
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 20px 50px;
+    }
+
     .card {
       background: white;
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
-      padding: 20px;
-      margin-top: 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
     }
+
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 22px;
     }
+
     label {
       display: block;
       font-weight: bold;
       margin-bottom: 8px;
+      font-size: 15px;
     }
+
+    .field-note {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
     textarea {
       width: 100%;
-      min-height: 260px;
-      padding: 12px;
+      min-height: 280px;
+      padding: 14px;
       border: 1px solid #cbd5e1;
-      border-radius: 12px;
+      border-radius: 14px;
       font-family: Arial, sans-serif;
       font-size: 14px;
       resize: vertical;
       box-sizing: border-box;
+      outline: none;
     }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
     .actions {
       margin-top: 20px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
+
     button {
       border: none;
       border-radius: 12px;
       padding: 12px 18px;
       font-weight: bold;
       cursor: pointer;
+      font-size: 14px;
     }
+
     .primary {
-      background: #2563eb;
+      background: var(--primary);
       color: white;
     }
+
+    .primary:hover {
+      background: var(--primary-dark);
+    }
+
     .secondary {
       background: white;
-      color: #0f172a;
+      color: var(--text);
       border: 1px solid #cbd5e1;
     }
+
+    .secondary:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .unlock-btn {
+      background: var(--success);
+      color: white;
+    }
+
+    .unlock-btn:hover {
+      background: var(--success-dark);
+    }
+
     .status {
       margin-top: 15px;
       font-size: 14px;
-      color: #475569;
+      color: var(--muted);
+      font-weight: bold;
+      min-height: 20px;
     }
+
+    .result-card {
+      margin-top: 24px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .result-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .result-top h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .result-top p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     .result {
-      margin-top: 20px;
+      margin-top: 10px;
       background: #0b1220;
       color: #e5eefc;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 18px;
       white-space: pre-wrap;
-      min-height: 220px;
+      min-height: 240px;
+      word-break: break-word;
+      font-size: 14px;
+      line-height: 1.6;
     }
+
+    .pay-box {
+      margin-top: 16px;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+    }
+
+    .pay-box h3 {
+      margin: 0 0 6px;
+      color: #166534;
+      font-size: 18px;
+    }
+
+    .pay-box p {
+      margin: 0 0 12px;
+      color: #166534;
+      font-size: 14px;
+    }
+
+    .small-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
     @media (max-width: 800px) {
       .grid {
         grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 34px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
       }
     }
   </style>
@@ -105,7 +254,7 @@ app.get("/", (req, res) => {
 <body>
   <div class="hero">
     <h1>Hirevize</h1>
-    <p>Genera CV, lettera motivazionale ed email candidatura con AI.</p>
+    <p>Genera CV, lettera motivazionale ed email candidatura con AI. Prova gratis l’anteprima e sblocca la versione completa.</p>
   </div>
 
   <div class="wrap">
@@ -113,11 +262,42 @@ app.get("/", (req, res) => {
       <div class="grid">
         <div>
           <label for="cv">Dati candidato</label>
-          <textarea id="cv" placeholder="Nome, esperienze, competenze, formazione..."></textarea>
+          <div class="field-note">Nome, esperienze, competenze, formazione, progetti, certificazioni.</div>
+          <textarea id="cv" placeholder="Mario Rossi
+
+Esperienza:
+- Addetto vendita presso negozio di elettronica, 2022-2024
+- Assistenza clienti
+- Gestione cassa
+- Riordino scaffali
+
+Competenze:
+- Assistenza clienti
+- Problem solving
+- Teamwork
+- Uso base Excel
+
+Formazione:
+- Diploma tecnico commerciale"></textarea>
         </div>
+
         <div>
           <label for="job">Annuncio di lavoro</label>
-          <textarea id="job" placeholder="Incolla qui l'annuncio di lavoro..."></textarea>
+          <div class="field-note">Incolla qui la job description completa.</div>
+          <textarea id="job" placeholder="Azienda retail cerca Sales Assistant.
+
+Responsabilità:
+- assistenza clienti
+- supporto vendita
+- gestione punto vendita
+- riassortimento scaffali
+
+Requisiti:
+- ottime capacità comunicative
+- orientamento al cliente
+- lavoro in team
+- flessibilità
+- conoscenza base strumenti digitali"></textarea>
         </div>
       </div>
 
@@ -125,24 +305,52 @@ app.get("/", (req, res) => {
         <button class="primary" onclick="generateResult()">Genera candidatura</button>
         <button class="secondary" onclick="loadDemo()">Carica demo</button>
         <button class="secondary" onclick="clearAll()">Pulisci</button>
-        <button class="secondary" onclick="copyResult()">Copia risultato</button>
-        <button class="secondary" onclick="downloadPDF()">Scarica PDF</button>
       </div>
 
       <div id="status" class="status"></div>
+    </div>
+
+    <div class="result-card">
+      <div class="result-top">
+        <div>
+          <h2>Risultato</h2>
+          <p>Vedi l’anteprima gratis. Sblocca la versione completa per ottenere tutto il contenuto.</p>
+        </div>
+        <div class="actions" style="margin-top:0;">
+          <button class="secondary" onclick="copyResult()">Copia anteprima</button>
+          <button class="secondary" onclick="downloadPDF()">Scarica PDF</button>
+        </div>
+      </div>
+
       <div id="result" class="result">Nessun risultato generato ancora.</div>
+
+      <div class="pay-box">
+        <h3>🔓 Sblocca la versione completa</h3>
+        <p>Ottieni il contenuto completo generato da Hirevize con CV, lettera motivazionale ed email candidatura.</p>
+        <button class="unlock-btn" onclick="unlock()">Sblocca versione completa (3€)</button>
+      </div>
+
+      <div class="small-note">
+        Dopo il pagamento puoi usare il tool completo dal sito e continuare a testare il servizio.
+      </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script>
+    let fullResult = "";
+
     function setStatus(text) {
       document.getElementById("status").innerText = text;
     }
 
+    function unlock() {
+      window.open("${GUMROAD_URL}", "_blank");
+    }
+
     function loadDemo() {
       document.getElementById("cv").value =
-        "Mario Rossi\\n" +
+        "Mario Rossi\\n\\n" +
         "Esperienza:\\n" +
         "- Addetto vendita presso negozio di elettronica, 2022-2024\\n" +
         "- Assistenza clienti\\n" +
@@ -177,6 +385,7 @@ app.get("/", (req, res) => {
       document.getElementById("cv").value = "";
       document.getElementById("job").value = "";
       document.getElementById("result").innerText = "Nessun risultato generato ancora.";
+      fullResult = "";
       setStatus("");
     }
 
@@ -202,8 +411,20 @@ app.get("/", (req, res) => {
         });
 
         const data = await response.json();
-        document.getElementById("result").innerText = data.result || "Nessun risultato.";
-        setStatus("Fatto.");
+        fullResult = data.result || "Nessun risultato.";
+
+        if (fullResult.startsWith("Errore")) {
+          document.getElementById("result").innerText = fullResult;
+          setStatus("Errore durante la generazione.");
+          return;
+        }
+
+        const preview = fullResult.substring(0, 350);
+        document.getElementById("result").innerText =
+          preview +
+          "\\n\\n🔒 Anteprima limitata. Sblocca la versione completa per vedere tutto il contenuto.";
+
+        setStatus("Anteprima generata.");
       } catch (error) {
         document.getElementById("result").innerText = "Errore: " + error.message;
         setStatus("Errore durante la richiesta.");
@@ -214,7 +435,7 @@ app.get("/", (req, res) => {
       const text = document.getElementById("result").innerText;
       try {
         await navigator.clipboard.writeText(text);
-        setStatus("Risultato copiato.");
+        setStatus("Anteprima copiata.");
       } catch (error) {
         setStatus("Impossibile copiare.");
       }
@@ -240,7 +461,7 @@ app.get("/", (req, res) => {
       let y = 20;
       doc.setFont("helvetica", "bold");
       doc.setFontSize(16);
-      doc.text("Hirevize - Candidatura generata", margin, y);
+      doc.text("Hirevize - Anteprima candidatura", margin, y);
 
       y += 10;
       doc.setFont("helvetica", "normal");
@@ -255,7 +476,7 @@ app.get("/", (req, res) => {
         y += 6;
       }
 
-      doc.save("hirevize-candidatura.pdf");
+      doc.save("hirevize-anteprima.pdf");
       setStatus("PDF scaricato.");
     }
   </script>
